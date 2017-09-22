@@ -24,9 +24,10 @@ class Root(resource.Resource):
         self.nodename = config.get('node_name', socket.gethostname())
         self.putChild(b'', Home(self, local_items))
         if logsdir:
-            self.putChild(b'logs', static.File(logsdir.encode('ascii', 'ignore'), 'text/plain'))
+            #self.putChild(b'logs', static.File(logsdir.encode('ascii', 'ignore'), 'text/plain'))
+            self.putChild(b'logs', static.File(logsdir.encode('utf-8', 'ignore'), 'text/plain; charset=utf-8'))
         if local_items:
-            self.putChild(b'items', static.File(itemsdir, 'text/plain'))
+            self.putChild(b'items', static.File(itemsdir, 'text/plain; charset=utf-8'))
         self.putChild(b'jobs', Jobs(self, local_items))
         services = config.items('services', ())
         for servName, servClsName in services:
@@ -74,12 +75,12 @@ class Home(resource.Resource):
 <h1>Scrapyd</h1>
 <p>Available projects: <b>%(projects)s</b></p>
 <ul>
-<li><a href="/jobs">Jobs</a></li>
+<li><a href="./jobs">Jobs</a></li>
 """ % vars
         if self.local_items:
-            s += '<li><a href="/items/">Items</a></li>'
+            s += '<li><a href="./items/">Items</a></li>'
         s += """
-<li><a href="/logs/">Logs</a></li>
+<li><a href="./logs/">Logs</a></li>
 <li><a href="http://scrapyd.readthedocs.org/en/latest/">Documentation</a></li>
 </ul>
 
@@ -106,10 +107,10 @@ class Jobs(resource.Resource):
 
     def render(self, txrequest):
         cols = 8
-        s = "<html><head><title>Scrapyd</title></head>"
+        s = "<html><head><title>Scrapyd 1.2 @zhaoqz</title></head>"
         s += "<body>"
         s += "<h1>Jobs</h1>"
-        s += "<p><a href='..'>Go back</a></p>"
+        s += "<p><a href='.'>Go back</a></p>"
         s += "<table border='1'>"
         s += "<tr><th>Project</th><th>Spider</th><th>Job</th><th>PID</th><th>Start</th><th>Runtime</th><th>Finish</th><th>Log</th>"
         if self.local_items:
@@ -132,9 +133,10 @@ class Jobs(resource.Resource):
             s += "<td>%s</td>" % p.start_time.replace(microsecond=0)
             s += "<td>%s</td>" % (datetime.now().replace(microsecond=0) - p.start_time.replace(microsecond=0))
             s += "<td></td>"
-            s += "<td><a href='/logs/%s/%s/%s.log'>Log</a></td>" % (p.project, p.spider, p.job)
+            s += "<td><a href='./logs/%s/%s/%s.log'>Log</a></td>" % (p.project, p.spider, p.job)
             if self.local_items:
-                s += "<td><a href='/items/%s/%s/%s.jl'>Items</a></td>" % (p.project, p.spider, p.job)
+                #s += "<td><a href='./items/%s/%s/%s.jl'>Items</a></td>" % (p.project, p.spider, p.job)
+                s += "<td><a href='./items/%s/%s/'>Items</a></td>" % (str(p.start_time)[:10].replace('-',''), p.spider)
             s += "</tr>"
         s += "<tr><th colspan='%s' style='background-color: #ddd'>Finished</th></tr>" % cols
         for p in self.root.launcher.finished:
@@ -145,9 +147,10 @@ class Jobs(resource.Resource):
             s += "<td>%s</td>" % p.start_time.replace(microsecond=0)
             s += "<td>%s</td>" % (p.end_time.replace(microsecond=0) - p.start_time.replace(microsecond=0))
             s += "<td>%s</td>" % p.end_time.replace(microsecond=0)
-            s += "<td><a href='/logs/%s/%s/%s.log'>Log</a></td>" % (p.project, p.spider, p.job)
+            s += "<td><a href='./logs/%s/%s/%s.log'>Log</a></td>" % (p.project, p.spider, p.job)
             if self.local_items:
-                s += "<td><a href='/items/%s/%s/%s.jl'>Items</a></td>" % (p.project, p.spider, p.job)
+                #s += "<td><a href='./items/%s/%s/%s.jl'>Items</a></td>" % (p.project, p.spider, p.job)
+                s += "<td><a href='./items/%s/%s/'>Items</a></td>" % (str(p.start_time)[:10].replace('-',''), p.spider)
             s += "</tr>"
         s += "</table>"
         s += "</body>"

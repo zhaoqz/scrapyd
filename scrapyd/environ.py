@@ -1,4 +1,5 @@
 import os
+import traceback
 from six.moves.urllib.parse import urlparse, urlunparse
 
 from w3lib.url import path_to_file_uri
@@ -59,5 +60,8 @@ class Environment(object):
         to_delete = sorted((os.path.join(logsdir, x) for x in \
             os.listdir(logsdir)), key=os.path.getmtime)[:-self.jobs_to_keep]
         for x in to_delete:
-            os.remove(x)
+            try:
+                os.remove(x)
+            except:
+                traceback.print_exc()
         return os.path.join(logsdir, "%s.%s" % (message['_job'], ext))
