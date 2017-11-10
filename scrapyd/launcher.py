@@ -41,6 +41,7 @@ class Launcher(Service):
         e = self.app.getComponent(IEnvironment)
         env = e.get_environment(msg, slot)
         env = native_stringify_dict(env, keys_only=False)
+        log.msg(format='Scrapyd %(version)s started: name=%(_name)r, env=%(env)r', version=__version__, name=env.get('_name',''), env=env)
         pp = ScrapyProcessProtocol(slot, project, msg['_spider'], \
             msg['_job'], env)
         pp.deferred.addBoth(self._process_finished, slot)
