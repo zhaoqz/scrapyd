@@ -202,7 +202,7 @@ class Jobs(resource.Resource):
                 Start=microsec_trunc(p.start_time),
                 Runtime=microsec_trunc(datetime.now() - p.start_time),
                 Log='<a href="./logs/%s/%s/%s.log">Log</a>' % (p.project, p.spider, p.job),
-                Items='<a href="./items/%s/%s/">Items</a>' % str(p.start_time)[:10].replace('-',''), p.spiderb),
+                Items='<a href="./items/%s/%s/">Items</a>' % (str(p.start_time)[:10].replace('-',''), p.spiderb),
                 Cancel=self.cancel_button(project=p.project, jobid=p.job)
             ))
             for p in self.root.launcher.processes.values()
