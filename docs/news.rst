@@ -3,6 +3,22 @@
 Release notes
 =============
 
+1.3.0
+-----
+*Unreleased*
+
+Added
+~~~~~
+
+- Jobs website shortcut to cancel a job using the cancel.json webservice.
+- Make project argument to listjobs.json optional,
+  so that we can easily query for all jobs.
+
+Removed
+~~~~~~~
+
+- Doc for ubunut installs removed. Scrapinghub no longer maintains ubuntu repo.
+
 1.2.0
 -----
 *Release date: 2017-04-12*
