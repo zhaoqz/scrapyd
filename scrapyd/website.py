@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import socket
 
@@ -115,7 +115,7 @@ class Jobs(resource.Resource):
         self.local_items = local_items
 
     cancel_button = """
-    <form method="post" action="/cancel.json">
+    <form method="post" action="./cancel.json">
     <input type="hidden" name="project" value="{project}"/>
     <input type="hidden" name="job" value="{jobid}"/>
     <input type="submit" style="float: left;" value="Cancel"/>
@@ -138,7 +138,7 @@ class Jobs(resource.Resource):
         if not self.local_items:
             col_idx = self.header_cols.index('Items') + 1
             css.append('#jobs>*>tr>*:nth-child(%d) {display: none}' % col_idx)
-        if 'cancel.json' not in self.root.children:
+        if 0 and 'cancel.json' not in self.root.children.keys():
             col_idx = self.header_cols.index('Cancel') + 1
             css.append('#jobs>*>tr>*:nth-child(%d) {display: none}' % col_idx)
         return '\n'.join(css)
@@ -202,7 +202,7 @@ class Jobs(resource.Resource):
                 Start=microsec_trunc(p.start_time),
                 Runtime=microsec_trunc(datetime.now() - p.start_time),
                 Log='<a href="./logs/%s/%s/%s.log">Log</a>' % (p.project, p.spider, p.job),
-                Items='<a href="./items/%s/%s/">Items</a>' % (str(p.start_time)[:10].replace('-',''), p.spiderb),
+                Items='<a href="./items/%s/%s/">Items</a>' % (str(p.start_time)[:10].replace('-',''), p.spider),
                 Cancel=self.cancel_button(project=p.project, jobid=p.job)
             ))
             for p in self.root.launcher.processes.values()
@@ -223,6 +223,8 @@ class Jobs(resource.Resource):
         )
 
     def render(self, txrequest):
+
+        print("render:%s"%txrequest) 
         doc = self.prep_doc()
         txrequest.setHeader('Content-Type', 'text/html; charset=utf-8')
         txrequest.setHeader('Content-Length', len(doc))
